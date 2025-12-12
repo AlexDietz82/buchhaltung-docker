@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>buchhaltung-backend</Name>
+  <Repository>node:18-alpine</Repository>
+  <Registry>https://hub.docker.com/_/node</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/AlexDietz82/buchhaltung-docker</Support>
+  <Project>https://github.com/AlexDietz82/buchhaltung-docker</Project>
+  <Overview>Backend-API-Server für die Buchhaltungsanwendung. Verarbeitet Geschäftslogik und kommuniziert mit der Datenbank.</Overview>
+  <Category>Productivity: Finance:</Category>
+  <WebUI>http://[IP]:[PORT:8079]/health</WebUI>
+  <TemplateURL/>
+  <Icon>https://raw.githubusercontent.com/docker-library/docs/master/node/logo.png</Icon>
+  <ExtraParams>--restart=unless-stopped</ExtraParams>
+  <PostArgs>npm start</PostArgs>
+  <CPUset/>
+  <DateInstalled></DateInstalled>
+  <DonateText/>
+  <DonateLink/>
+  <Requires>Benötigt buchhaltung-db Container</Requires>
+  <Config Name="API Port" Target="8079" Default="8079" Mode="tcp" Description="Port für Backend-API" Type="Port" Display="always" Required="true" Mask="false">8079</Config>
+  <Config Name="Upload Directory" Target="/app/uploads" Default="/mnt/user/appdata/buchhaltung/backend/uploads" Mode="rw" Description="Verzeichnis für hochgeladene Dateien (Belege, Rechnungen)" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/buchhaltung/backend/uploads</Config>
+  <Config Name="Application Code" Target="/app" Default="/mnt/user/appdata/buchhaltung/backend/app" Mode="rw" Description="Backend-Anwendungscode" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/buchhaltung/backend/app</Config>
+  <Config Name="Environment Config" Target="/app/.env" Default="/mnt/user/appdata/buchhaltung/backend/.env" Mode="ro" Description="Umgebungsvariablen-Datei" Type="Path" Display="always" Required="false" Mask="false">/mnt/user/appdata/buchhaltung/backend/.env</Config>
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="User ID (Unraid Standard: 99 = nobody)" Type="Variable" Display="advanced" Required="true" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group ID (Unraid Standard: 100 = users)" Type="Variable" Display="advanced" Required="true" Mask="false">100</Config>
+  <Config Name="Timezone" Target="TZ" Default="Europe/Berlin" Mode="" Description="Zeitzone" Type="Variable" Display="advanced" Required="false" Mask="false">Europe/Berlin</Config>
+  <Config Name="Node Environment" Target="NODE_ENV" Default="production" Mode="" Description="Node.js Umgebung" Type="Variable" Display="advanced" Required="true" Mask="false">production</Config>
+  <Config Name="API Port (Env)" Target="PORT" Default="8079" Mode="" Description="Port auf dem der Server läuft" Type="Variable" Display="advanced" Required="true" Mask="false">8079</Config>
+  <Config Name="Custom Network" Target="" Default="buchhaltung-network" Mode="" Description="Docker-Netzwerk für interne Kommunikation" Type="Label" Display="advanced" Required="false" Mask="false">buchhaltung-network</Config>
+</Container>
