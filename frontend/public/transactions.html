@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transaktionen - Buchhaltung</title>
+  <link rel="stylesheet" href="/css/style-system.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <nav class="app-nav">
+      <div class="app-nav-brand">Buchhaltung</div>
+      <ul class="app-nav-menu" id="nav-menu"></ul>
+      <button class="btn btn-secondary btn-small" onclick="logout()">Abmelden</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-24);">
+        <h1>Einmalige Buchungen (EB)</h1>
+        <button class="btn btn-primary" onclick="showAddModal()">+ Neue Buchung</button>
+      </div>
+
+      <div id="alert-container"></div>
+
+      <div id="filters" class="mb-24"></div>
+
+      <div id="transactions-list"></div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Neue Buchung</h2>
+      </div>
+      <div class="modal-body">
+        <form id="transaction-form">
+          <input type="hidden" id="transaction-id">
+          
+          <div class="form-group">
+            <label class="form-label" for="account_id">Konto *</label>
+            <select id="account_id" class="form-control" required></select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="date">Datum *</label>
+              <input type="date" id="date" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="amount">Betrag (€) *</label>
+              <input type="number" id="amount" class="form-control" step="0.01" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="description">Beschreibung *</label>
+            <input type="text" id="description" class="form-control" maxlength="1000" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="payment_method">Zahlungsmethode *</label>
+              <select id="payment_method" class="form-control" required>
+                <option value="PayPal">PayPal</option>
+                <option value="SEPA">SEPA</option>
+                <option value="CASH">CASH</option>
+                <option value="BANK">BANK</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="category">Kategorie</label>
+              <select id="category" class="form-control"></select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="note">Notiz</label>
+            <textarea id="note" class="form-control" maxlength="2000"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="booked_on_giro">
+              Auf Girokonto gebucht
+            </label>
+          </div>
+
+          <div class="form-group" id="file-upload-section">
+            <label class="form-label">PDF-Anhänge</label>
+            <div class="file-upload" onclick="document.getElementById('file-input').click()">
+              <input type="file" id="file-input" accept="application/pdf" multiple>
+              <p>PDF-Dateien hier ablegen oder klicken zum Hochladen</p>
+            </div>
+            <div id="file-list" class="file-list"></div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Abbrechen</button>
+        <button class="btn btn-primary" onclick="saveTransaction()">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/transactions.js"></script>
+</body>
+</html>

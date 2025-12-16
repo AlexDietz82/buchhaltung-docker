@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration - Buchhaltung</title>
+  <link rel="stylesheet" href="/css/style-system.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <nav class="app-nav">
+      <div class="app-nav-brand">Buchhaltung</div>
+      <ul class="app-nav-menu" id="nav-menu"></ul>
+      <button class="btn btn-secondary btn-small" onclick="logout()">Abmelden</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h1>Benutzerverwaltung</h1>
+      <button class="btn btn-primary mb-24" onclick="showAddUserModal()">+ Neuer Benutzer</button>
+      <div id="users-list"></div>
+    </div>
+
+    <div class="card">
+      <h1>Kontenverwaltung</h1>
+      <button class="btn btn-primary mb-24" onclick="showAddAccountModal()">+ Neues Konto</button>
+      <div id="accounts-list"></div>
+    </div>
+  </div>
+
+  <div id="user-modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header"><h2 id="user-modal-title">Neuer Benutzer</h2></div>
+      <div class="modal-body">
+        <form id="user-form">
+          <input type="hidden" id="user-id">
+          <div class="form-group">
+            <label class="form-label" for="username">Benutzername *</label>
+            <input type="text" id="username" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="password">Passwort</label>
+            <input type="password" id="password" class="form-control" minlength="12">
+            <small class="text-muted">Leer lassen, um nicht zu ändern</small>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="role">Rolle *</label>
+            <select id="role" class="form-control" required>
+              <option value="USER">Benutzer</option>
+              <option value="ADMIN">Administrator</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><input type="checkbox" id="active" checked> Aktiv</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeUserModal()">Abbrechen</button>
+        <button class="btn btn-primary" onclick="saveUser()">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="account-modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header"><h2 id="account-modal-title">Neues Konto</h2></div>
+      <div class="modal-body">
+        <form id="account-form">
+          <input type="hidden" id="account-id">
+          <div class="form-group">
+            <label class="form-label" for="account-name">Name *</label>
+            <input type="text" id="account-name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="opening_balance">Eröffnungssaldo (€) *</label>
+            <input type="number" id="opening_balance" class="form-control" step="0.01" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeAccountModal()">Abbrechen</button>
+        <button class="btn btn-primary" onclick="saveAccount()">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wiederkehrende Buchungen - Buchhaltung</title>
+  <link rel="stylesheet" href="/css/style-system.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <nav class="app-nav">
+      <div class="app-nav-brand">Buchhaltung</div>
+      <ul class="app-nav-menu" id="nav-menu"></ul>
+      <button class="btn btn-secondary btn-small" onclick="logout()">Abmelden</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-24);">
+        <h1>Wiederkehrende Buchungen (WB/EK)</h1>
+        <button class="btn btn-primary" onclick="showAddModal()">+ Neue Buchung</button>
+      </div>
+
+      <div id="alert-container"></div>
+      <div id="recurring-list"></div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Neue wiederkehrende Buchung</h2>
+      </div>
+      <div class="modal-body">
+        <form id="recurring-form">
+          <input type="hidden" id="recurring-id">
+          
+          <div class="form-group">
+            <label class="form-label" for="account_id">Konto *</label>
+            <select id="account_id" class="form-control" required></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="description">Beschreibung *</label>
+            <input type="text" id="description" class="form-control" maxlength="1000" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="art">Art *</label>
+              <select id="art" class="form-control" required>
+                <option value="WB">WB - Wiederkehrende Buchung</option>
+                <option value="EK">EK - Einnahme</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="interval">Intervall *</label>
+              <select id="interval" class="form-control" required>
+                <option value="daily">Täglich</option>
+                <option value="weekly">Wöchentlich</option>
+                <option value="monthly">Monatlich</option>
+                <option value="quarterly">Vierteljährlich</option>
+                <option value="semiannual">Halbjährlich</option>
+                <option value="yearly">Jährlich</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="occurrence_amount">Betrag (€) *</label>
+              <input type="number" id="occurrence_amount" class="form-control" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="payment_method">Zahlungsmethode *</label>
+              <select id="payment_method" class="form-control" required>
+                <option value="PayPal">PayPal</option>
+                <option value="SEPA">SEPA</option>
+                <option value="CASH">CASH</option>
+                <option value="BANK">BANK</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="start_date">Startdatum *</label>
+              <input type="date" id="start_date" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="end_date">Enddatum</label>
+              <input type="date" id="end_date" class="form-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="category">Kategorie</label>
+            <select id="category" class="form-control"></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="note">Notiz</label>
+            <textarea id="note" class="form-control" maxlength="2000"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="booked_on_giro">
+              Auf Girokonto gebucht
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Abbrechen</button>
+        <button class="btn btn-primary" onclick="saveRecurring()">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/recurring.js"></script>
+</body>
+</html>

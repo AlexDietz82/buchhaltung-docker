@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neue PayPal Ratenzahlung - Buchhaltung</title>
+  <link rel="stylesheet" href="/css/style-system.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <nav class="app-nav">
+      <div class="app-nav-brand">Buchhaltung</div>
+      <ul class="app-nav-menu" id="nav-menu"></ul>
+      <button class="btn btn-secondary btn-small" onclick="logout()">Abmelden</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h1>Neue PayPal Ratenzahlung</h1>
+      <div id="alert-container"></div>
+
+      <form id="paypal-form">
+        <div class="form-group">
+          <label class="form-label" for="account_id">Konto *</label>
+          <select id="account_id" class="form-control" required></select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="description">Beschreibung *</label>
+          <input type="text" id="description" class="form-control" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="occurrence_amount">Monatliche Rate (€) *</label>
+            <input type="number" id="occurrence_amount" class="form-control" step="0.01" required>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="remaining_installments">Anzahl Raten *</label>
+            <input type="number" id="remaining_installments" class="form-control" min="1" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="total_remaining">Gesamtbetrag (€)</label>
+            <input type="number" id="total_remaining" class="form-control" step="0.01">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="last_installment">Letzte Rate (€)</label>
+            <input type="number" id="last_installment" class="form-control" step="0.01">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="start_date">Startdatum *</label>
+          <input type="date" id="start_date" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="category">Kategorie</label>
+          <select id="category" class="form-control"></select>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" onclick="window.location.href='/paypal.html'">Abbrechen</button>
+          <button type="submit" class="btn btn-primary">Speichern</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    let accounts = [];
+    let categories = [];
+
+    (async function() {
+      if (!(await requireAuth())) return;
+      await loadAccounts();
+      await loadCategories();
+      setupNavigation();
+      document.getElementById('start_date').value = formatDateISO(new Date());
+    })();
+
+    async function loadAccounts() {
+      try {
+        accounts = await apiRequest('/accounts');
+        const select = document.getElementById('account_id');
+        accounts.forEach(account => {
+          const option = document.createElement('option');
+          option.value = account.id;
+          option.textContent = account.name;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        showError('Fehler beim Laden der Konten');
+      }
+    }
+
+    async function loadCategories() {
+      try {
+        categories = await apiRequest('/categories');
+        const select = document.getElementById('category');
+        select.innerHTML = '<option value="">Keine Kategorie</option>';
+        categories.filter(c => c.active).forEach(category => {
+          const option = document.createElement('option');
+          option.value = category.key;
+          option.textContent = category.label;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        showError('Fehler beim Laden der Kategorien');
+      }
+    }
+
+    document.getElementById('paypal-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      try {
+        const data = {
+          account_id: document.getElementById('account_id').value,
+          description: document.getElementById('description').value,
+          art: 'PP',
+          interval: 'monthly',
+          interval_count: 1,
+          occurrence_amount: parseFloat(document.getElementById('occurrence_amount').value),
+          remaining_installments: parseInt(document.getElementById('remaining_installments').value),
+          total_remaining: document.getElementById('total_remaining').value ? parseFloat(document.getElementById('total_remaining').value) : null,
+          last_installment: document.getElementById('last_installment').value ? parseFloat(document.getElementById('last_installment').value) : null,
+          start_date: document.getElementById('start_date').value,
+          category: document.getElementById('category').value || null,
+          payment_method: 'PayPal',
+          booked_on_giro: false
+        };
+        
+        await apiRequest('/recurring', {
+          method: 'POST',
+          body: JSON.stringify(data)
+        });
+        
+        showSuccess('PayPal-Ratenzahlung erstellt');
+        setTimeout(() => window.location.href = '/paypal.html', 1000);
+      } catch (error) {
+        showError(error.message || 'Fehler beim Speichern');
+      }
+    });
+
+    function setupNavigation() {
+      const navMenu = document.getElementById('nav-menu');
+      const pages = [
+        { name: 'dashboard', label: 'Dashboard', url: '/dashboard.html' },
+        { name: 'transactions', label: 'Transaktionen', url: '/transactions.html' },
+        { name: 'recurring', label: 'Wiederkehrend', url: '/recurring.html' },
+        { name: 'paypal', label: 'PayPal', url: '/paypal.html' },
+        { name: 'reports', label: 'Berichte', url: '/reports.html' },
+        { name: 'charts', label: 'Diagramme', url: '/charts.html' },
+        { name: 'admin', label: 'Admin', url: '/admin.html' },
+        { name: 'categories', label: 'Kategorien', url: '/categories.html' }
+      ];
+      
+      pages.forEach(page => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = page.url;
+        a.textContent = page.label;
+        if (window.location.pathname.endsWith(page.url)) a.className = 'active';
+        li.appendChild(a);
+        navMenu.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
