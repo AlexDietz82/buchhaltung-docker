@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Berichte - Buchhaltung</title>
+  <link rel="stylesheet" href="/css/style-system.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <header class="app-header">
+    <nav class="app-nav">
+      <div class="app-nav-brand">Buchhaltung</div>
+      <ul class="app-nav-menu" id="nav-menu"></ul>
+      <button class="btn btn-secondary btn-small" onclick="logout()">Abmelden</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h1>Monatsberichte</h1>
+      <div style="margin-bottom: var(--space-24);">
+        <label for="month-select" class="form-label">Monat:</label>
+        <input type="month" id="month-select" class="form-control" style="width: 200px;">
+      </div>
+
+      <div id="alert-container"></div>
+      <div id="summary-block"></div>
+      <div id="transactions-list"></div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/reports.js"></script>
+</body>
+</html>

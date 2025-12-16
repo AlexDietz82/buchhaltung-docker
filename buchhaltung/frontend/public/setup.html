@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setup - Buchhaltung</title>
+  <link rel="stylesheet" href="/css/style-system.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h1 class="auth-title">Buchhaltung Setup</h1>
+      
+      <div id="alert-container"></div>
+
+      <form id="setup-form">
+        <div class="form-group">
+          <label class="form-label" for="username">Benutzername</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            class="form-control" 
+            required 
+            minlength="3" 
+            maxlength="100"
+            autocomplete="username"
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Passwort</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="form-control" 
+            required 
+            minlength="12"
+            autocomplete="new-password"
+          >
+          <small class="text-muted">Mindestens 12 Zeichen</small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password_confirm">Passwort bestätigen</label>
+          <input 
+            type="password" 
+            id="password_confirm" 
+            name="password_confirm" 
+            class="form-control" 
+            required 
+            minlength="12"
+            autocomplete="new-password"
+          >
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="submit-btn">
+          Admin-Benutzer erstellen
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    // Check if setup is still available
+    (async function() {
+      try {
+        await apiRequest('/auth/setup');
+      } catch (error) {
+        if (error.message.includes('410') || error.message.includes('bereits abgeschlossen')) {
+          window.location.href = '/login.html';
+        }
+      }
+    })();
+
+    // Handle setup form submission
+    document.getElementById('setup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const passwordConfirm = document.getElementById('password_confirm').value;
+
+      // Validate
+      if (username.length < 3 || username.length > 100) {
+        showError('Benutzername muss zwischen 3 und 100 Zeichen lang sein');
+        return;
+      }
+
+      if (password.length < 12) {
+        showError('Passwort muss mindestens 12 Zeichen lang sein');
+        return;
+      }
+
+      if (password !== passwordConfirm) {
+        showError('Passwörter stimmen nicht überein');
+        return;
+      }
+
+      // Disable submit button
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Wird erstellt...';
+
+      try {
+        await setupAdmin(username, password, passwordConfirm);
+        showSuccess('Admin-Benutzer erfolgreich erstellt!');
+        
+        setTimeout(() => {
+          window.location.href = '/dashboard.html';
+        }, 1000);
+      } catch (error) {
+        showError(error.message || 'Fehler beim Setup');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Admin-Benutzer erstellen';
+      }
+    });
+  </script>
+</body>
+</html>

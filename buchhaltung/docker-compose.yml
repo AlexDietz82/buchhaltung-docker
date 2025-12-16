@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: buchhaltung-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-buchhaltung}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_secure_password}
+      POSTGRES_DB: ${POSTGRES_DB:-buchhaltung}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - buchhaltung-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-buchhaltung}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: buchhaltung-backend
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${PORT:-8079}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_USER: ${POSTGRES_USER:-buchhaltung}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-changeme_secure_password}
+      DB_NAME: ${POSTGRES_DB:-buchhaltung}
+      SESSION_SECRET: ${SESSION_SECRET:-changeme_very_long_random_session_secret_min_32_chars}
+      BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
+      MAX_FILE_SIZE: ${MAX_FILE_SIZE:-10485760}
+      UPLOAD_DIR: ${UPLOAD_DIR:-/app/uploads}
+    volumes:
+      - upload_data:/app/uploads
+    ports:
+      - "8079:8079"
+    networks:
+      - buchhaltung-network
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: buchhaltung-frontend
+    environment:
+      BACKEND_URL: http://backend:8079
+    ports:
+      - "8082:80"
+    networks:
+      - buchhaltung-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  upload_data:
+    driver: local
+
+networks:
+  buchhaltung-network:
+    driver: bridge

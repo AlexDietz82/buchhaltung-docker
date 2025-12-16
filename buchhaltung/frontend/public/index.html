@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buchhaltung</title>
+  <link rel="stylesheet" href="/css/style-system.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    // Redirect logic
+    (async function() {
+      const adminExists = await checkAdminExists();
+      
+      if (!adminExists) {
+        // No admin exists, go to setup
+        window.location.href = '/setup.html';
+      } else {
+        // Admin exists, check if authenticated
+        const isAuthenticated = await checkAuth();
+        
+        if (isAuthenticated) {
+          // Authenticated, go to dashboard
+          window.location.href = '/dashboard.html';
+        } else {
+          // Not authenticated, go to login
+          window.location.href = '/login.html';
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

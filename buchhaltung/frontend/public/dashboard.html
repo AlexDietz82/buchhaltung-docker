@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Buchhaltung</title>
+  <link rel="stylesheet" href="/css/style-system.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <header class="app-header">
+    <nav class="app-nav">
+      <div class="app-nav-brand">Buchhaltung</div>
+      <ul class="app-nav-menu" id="nav-menu"></ul>
+      <button class="btn btn-secondary btn-small" onclick="logout()">Abmelden</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-24);">
+        <h1>Dashboard</h1>
+        <div>
+          <label for="month-select" class="form-label" style="display: inline-block; margin-right: var(--space-8);">Monat:</label>
+          <select id="month-select" class="form-control" style="width: auto; display: inline-block; min-width: 120px;">
+          <!-- Optionen werden per JS gebaut -->
+          </select>
+
+        </div>
+      </div>
+
+      <div id="alert-container"></div>
+
+      <div id="account-filter" class="mb-24"></div>
+
+      <h2>Monatsübersicht <span id="month-name"></span></h2>
+
+      <h3>Buchungen</h3>
+      <div id="transactions-list"></div>
+
+      <div id="monthly-info" class="mb-24"></div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
