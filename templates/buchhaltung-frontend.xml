@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>buchhaltung-frontend</Name>
+  <Repository>nginx:alpine</Repository>
+  <Registry>https://hub.docker.com/_/nginx</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/AlexDietz82/buchhaltung-docker</Support>
+  <Project>https://github.com/AlexDietz82/buchhaltung-docker</Project>
+  <Overview>Frontend-Webserver für die Buchhaltungsanwendung. Basiert auf nginx und stellt die Benutzeroberfläche bereit.</Overview>
+  <Category>Productivity: Finance:</Category>
+  <WebUI>http://[IP]:[PORT:8082]/</WebUI>
+  <TemplateURL/>
+  <Icon>https://raw.githubusercontent.com/docker-library/docs/master/nginx/logo.png</Icon>
+  <ExtraParams>--restart=unless-stopped</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled></DateInstalled>
+  <DonateText/>
+  <DonateLink/>
+  <Requires>Benötigt buchhaltung-backend Container</Requires>
+  <Config Name="Web UI Port" Target="80" Default="8082" Mode="tcp" Description="Port für den Web-Zugriff" Type="Port" Display="always" Required="true" Mask="false">8082</Config>
+  <Config Name="nginx Configuration" Target="/etc/nginx/nginx.conf" Default="/mnt/user/appdata/buchhaltung/frontend/nginx.conf" Mode="ro" Description="nginx Konfigurationsdatei" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/buchhaltung/frontend/nginx.conf</Config>
+  <Config Name="Frontend Files" Target="/usr/share/nginx/html" Default="/mnt/user/appdata/buchhaltung/frontend/public" Mode="ro" Description="Frontend HTML/CSS/JS Dateien" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/buchhaltung/frontend/public</Config>
+  <Config Name="Timezone" Target="TZ" Default="Europe/Berlin" Mode="" Description="Zeitzone" Type="Variable" Display="advanced" Required="false" Mask="false">Europe/Berlin</Config>
+  <Config Name="Custom Network" Target="" Default="buchhaltung-network" Mode="" Description="Docker-Netzwerk für interne Kommunikation" Type="Label" Display="advanced" Required="false" Mask="false">buchhaltung-network</Config>
+</Container>

@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  buchhaltung-frontend:
+    image: nginx:alpine
+    container_name: buchhaltung-frontend
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    volumes:
+      - /mnt/user/appdata/buchhaltung/frontend/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /mnt/user/appdata/buchhaltung/frontend/public:/usr/share/nginx/html:ro
+    networks:
+      - buchhaltung-network
+    depends_on:
+      - buchhaltung-backend
+    environment:
+      - TZ=Europe/Berlin
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  buchhaltung-backend:
+    image: node:18-alpine
+    container_name: buchhaltung-backend
+    restart: unless-stopped
+    working_dir: /app
+    command: npm start
+    ports:
+      - "8079:8079"
+    volumes:
+      - /mnt/user/appdata/buchhaltung/backend/uploads:/app/uploads
+      - /mnt/user/appdata/buchhaltung/backend/.env:/app/.env:ro
+      - /mnt/user/appdata/buchhaltung/backend/app:/app
+    networks:
+      - buchhaltung-network
+    depends_on:
+      buchhaltung-db:
+        condition: service_healthy
+    environment:
+      - PUID=99    # Unraid default user
+      - PGID=100   # Unraid default group
+      - TZ=Europe/Berlin
+      - NODE_ENV=production
+      - PORT=8079
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8079/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  buchhaltung-db:
+    image: postgres:15-alpine
+    container_name: buchhaltung-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    volumes:
+      - /mnt/user/appdata/buchhaltung/db/data:/var/lib/postgresql/data
+      - /mnt/user/appdata/buchhaltung/db/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - buchhaltung-network
+    environment:
+      - PUID=99
+      - PGID=100
+      - TZ=Europe/Berlin
+      - POSTGRES_DB=buchhaltung
+      - POSTGRES_USER=buchhaltung_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-changeme}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U buchhaltung_user -d buchhaltung"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+networks:
+  buchhaltung-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

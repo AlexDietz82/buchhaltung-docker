@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>buchhaltung-db</Name>
+  <Repository>postgres:15-alpine</Repository>
+  <Registry>https://hub.docker.com/_/postgres</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/AlexDietz82/buchhaltung-docker</Support>
+  <Project>https://github.com/AlexDietz82/buchhaltung-docker</Project>
+  <Overview>PostgreSQL-Datenbank für die Buchhaltungsanwendung. Speichert alle Finanzdaten, Transaktionen und Benutzerkontoinformationen.</Overview>
+  <Category>Productivity: Finance:</Category>
+  <WebUI/>
+  <TemplateURL/>
+  <Icon>https://raw.githubusercontent.com/docker-library/docs/master/postgres/logo.png</Icon>
+  <ExtraParams>--restart=unless-stopped</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled></DateInstalled>
+  <DonateText/>
+  <DonateLink/>
+  <Requires>Keine weiteren Container erforderlich</Requires>
+  <Config Name="Database Port" Target="5432" Default="5432" Mode="tcp" Description="PostgreSQL Port (optional für externe Tools)" Type="Port" Display="always" Required="false" Mask="false">5432</Config>
+  <Config Name="Database Data" Target="/var/lib/postgresql/data" Default="/mnt/user/appdata/buchhaltung/db/data" Mode="rw" Description="PostgreSQL Datenbankdaten (WICHTIG: Regelmäßig sichern!)" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/buchhaltung/db/data</Config>
+  <Config Name="Init Scripts" Target="/docker-entrypoint-initdb.d" Default="/mnt/user/appdata/buchhaltung/db/init" Mode="ro" Description="SQL-Initialisierungsskripte (nur beim ersten Start)" Type="Path" Display="always" Required="false" Mask="false">/mnt/user/appdata/buchhaltung/db/init</Config>
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="User ID (Unraid Standard: 99 = nobody)" Type="Variable" Display="advanced" Required="true" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Group ID (Unraid Standard: 100 = users)" Type="Variable" Display="advanced" Required="true" Mask="false">100</Config>
+  <Config Name="Timezone" Target="TZ" Default="Europe/Berlin" Mode="" Description="Zeitzone" Type="Variable" Display="advanced" Required="false" Mask="false">Europe/Berlin</Config>
+  <Config Name="Database Name" Target="POSTGRES_DB" Default="buchhaltung" Mode="" Description="Name der Datenbank" Type="Variable" Display="always" Required="true" Mask="false">buchhaltung</Config>
+  <Config Name="Database User" Target="POSTGRES_USER" Default="buchhaltung_user" Mode="" Description="Datenbank-Benutzername" Type="Variable" Display="always" Required="true" Mask="false">buchhaltung_user</Config>
+  <Config Name="Database Password" Target="POSTGRES_PASSWORD" Default="" Mode="" Description="Datenbank-Passwort (WICHTIG: Sicheres Passwort verwenden!)" Type="Variable" Display="always" Required="true" Mask="true">changeme</Config>
+  <Config Name="Custom Network" Target="" Default="buchhaltung-network" Mode="" Description="Docker-Netzwerk für interne Kommunikation" Type="Label" Display="advanced" Required="false" Mask="false">buchhaltung-network</Config>
+</Container>
